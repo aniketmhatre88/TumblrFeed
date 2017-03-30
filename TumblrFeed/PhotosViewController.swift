@@ -18,34 +18,20 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        //TODO: figure this out
         let refreshControl = UIRefreshControl()
-        refreshControl.addTarget(self, action: #selector(refreshControlAction(_refreshControl:)), for: UIControlEvents.valueChanged)
+        refreshControl.addTarget(self, action: #selector(refreshControlAction(_:)), for: UIControlEvents.valueChanged)
         
-        requiestData()
         
         tableView.rowHeight = 240;
         tableView.delegate = self
         tableView.dataSource = self
-        // Do any additional setup after loading the view.
+        
+        requestData()
     }
     
     func refreshControlAction(_ refreshControl: UIRefreshControl) {
-        
-        // ... Create the URLRequest `myRequest` ...
-        
-        // Configure session so that completion handler is executed on main UI thread
-        let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
-        let task: URLSessionDataTask = session.dataTask(with: request) { (data: Data?, response: URLResponse?, error: Error?) in
-            
-            // ... Use the new data to update the data source ...
-            
-            // Reload the tableView now that there is new data
-            tableView.reloadData()
-            
-            // Tell the refreshControl to stop spinning
-            refreshControl.endRefreshing()
-        }
-        task.resume()
+        requestData()
     }
 
     override func didReceiveMemoryWarning() {
@@ -70,18 +56,14 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
             if let imageUrl = URL(string: imageUrlString!) {
                 // URL(string: imageUrlString!) is NOT nil, go ahead and unwrap it and assign it to imageUrl and run the code in the curly braces
                 cell.rowImageView.setImageWith(imageUrl)
-            } else {
-                // URL(string: imageUrlString!) is nil. Good thing we didn't try to unwrap it!
             }
             
-        } else {
-            // photos is nil. Good thing we didn't try to unwrap it!
         }
         
         return cell
     }
     
-    func requiestData() {
+    func requestData() {
         let url = URL(string:"https://api.tumblr.com/v2/blog/humansofnewyork.tumblr.com/posts/photo?api_key=Q6vHoaVm5L1u2ZAW1fqv3Jw48gFzYVg9P0vH0VHl3GVy6quoGV")
         let request = URLRequest(url: url!)
         let session = URLSession(
